@@ -1,0 +1,24 @@
+{
+  "name": "typescript-tetris",
+  "version": "1.0.0",
+  "description": "A Tetris Clone made with TypeScript and Canvas",
+  "main": "index.js",
+  "dependencies": {
+    "typescript": "^4.4.4"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JomoPipi/typescript-tetris.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/JomoPipi/typescript-tetris/issues"
+  },
+  "homepage": "https://github.com/JomoPipi/typescript-tetris#readme"
+}
