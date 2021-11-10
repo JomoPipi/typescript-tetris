@@ -211,7 +211,8 @@ function collisionExists() {
 
 function nextBlock() {
     const { x, y, type } = game.currentBlock
-    if (y < 0)
+    const minY = Math.min(...game.currentBlock.points.map(({ y }) => y)) + y
+    if (minY < 0)
     {
         game.state = STATES.gameOver
         requestAnimationFrame(render)
