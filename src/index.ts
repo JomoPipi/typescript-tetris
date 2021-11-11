@@ -17,7 +17,7 @@ const msgPrompt = document.getElementById('msg-prompt')!
 const ctx = canvas.getContext('2d')!
 const W = 10
 const H = 20
-const TICK = 250
+const BASE_TICK = 1000
 const PRESSING = { none: 0, left: 1, up: 2, right: 4, down: 8, 'rotate-left': 16, 'rotate-right': 32 } as const
 const KeyMap = { a: 'left', w: 'up', d: 'right', s: 'down', q: 'rotate-left', e: 'rotate-right' } as const
 const TetriminoShapes : Record<TetriminoTypes, Point[]> = 
@@ -55,12 +55,12 @@ main: {
     updateDimensions()
     window.addEventListener('resize', updateDimensions)
     const btns = document.getElementById('mobile-btns')!
-    // btns.style.display = isMobile
-    //     ? 'block'
-    //     : 'none'
-    console.log('hello')
-    // if (isMobile)
-    if (true)
+    btns.style.display = isMobile
+        ? 'block'
+        : 'none'
+        
+    if (isMobile)
+    // if (true)
     {
         const leftBtn = document.getElementById('left-btn')!
         const rightBtn = document.getElementById('right-btn')!
@@ -204,7 +204,9 @@ function gameOver() {
 
 function tickCurrentBlock(t : number) {
     const dt = t - game.lastTick
-    if (dt >= TICK)
+    const level = game.totalClearedLines / 10 | 0
+    const tick = BASE_TICK - level * 50 // Level 20 is the theoretical maximum.
+    if (dt >= tick)
     {
         game.lastTick = t
         game.currentBlock.y++
@@ -364,12 +366,24 @@ function clearCompletedLines() {
     }
     if (!lines.size) return
 
+    const lastLevel = game.totalClearedLines / 10 | 0
+
+    game.totalClearedLines += lines.size
     game.blockGrid = [...Array(lines.size)].map(_ => [...Array(W)])
         .concat(game.blockGrid.filter((_,r) => !lines.has(r)))
 
-    const scores = [0, 100, 200, 400, 1000]
-    const getScore = (n : number) => [40 * (n + 1), 100 * (n + 1), 300 * (n + 1), 1200 * (n + 1)]
+    const getScore = (n : number) => [0, 40, 100, 300, 1200].map(x => x * (n + 1))
     const level = game.totalClearedLines / 10 | 0
+
+    if (level > lastLevel)
+    {
+        const bg = document.getElementById('bg')!
+        bg.style.filter = 
+            `contrast(35%) blur(2px) brightness(40%) hue-rotate(${360 * Math.random() | 0}deg)`
+        bg.style.backgroundPosition = 
+            `${Math.random() * 100 | 0}% ${Math.random() * 100 | 0}%`
+    }
+
     game.score += getScore(level)[lines.size] // lines.size * W * 2 // Each tile is worth two points
 }
 
