@@ -10,13 +10,21 @@
             margin: 0;
             padding: 0;
         }
-        #bg {
+        .layer {
             position: absolute;
-            z-index: -1;
             top: 0;
             left: 0;
             bottom: 0;
             right: 0;
+
+        }
+        #msg-prompt {
+            font: 2em arial;
+            color: white;
+            text-shadow: 1em black;
+        }
+        #bg {
+            z-index: -1;
             background-image: url(/images/bg.jpg);
             background-size: cover;
             background-repeat: no-repeat;
@@ -29,7 +37,8 @@
 </head>
 <body>
     <script type=module src=dist/index.js defer></script>
-    <div id=bg></div>
+    <div id=bg class=layer></div>
+    <div id=msg-prompt class=layer> Hello, World! </div>
     <canvas id=canvas></canvas>
 </body>
 </html>

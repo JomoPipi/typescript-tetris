@@ -1,4 +1,6 @@
 
+const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
 enum STATES { standby, game, gameOver }
 enum TetriminoTypes { I, J, L, O, S, T, Z }
 
@@ -11,6 +13,7 @@ type Tetrimino =
     }
 
 const canvas = document.getElementById('canvas')! as HTMLCanvasElement
+const msgPrompt = document.getElementById('msg-prompt')!
 const ctx = canvas.getContext('2d')!
 const W = 10
 const H = 20
@@ -50,10 +53,10 @@ const game =
 updateDimensions()
 window.addEventListener('resize', updateDimensions)
 function updateDimensions() {
-    const [scaleW, scaleH] = [0.6, 1]
+    // const [scaleW, scaleH] = [0.6, 1]
     canvas.width = window.innerWidth
     canvas.height = window.innerHeight
-    game.pixelSize = Math.min(canvas.width * scaleW / W, canvas.height * scaleH / H)
+    game.pixelSize = Math.min(canvas.width / W, canvas.height / H)
     ctx.font = '30px Arial'
     render()
 }
@@ -97,12 +100,12 @@ document.onkeyup = e => {
 
 
 function standby() {
-    const text = 'PRESS ANY KEY TO PLAY'
-    const text2 = 'Keys: W, A, S, D, Q, E'
+    console.log('isMobile =',isMobile)
+    msgPrompt.innerText = isMobile
+        ? 'TAP TO PLAY'
+        : `PRESS ANY KEY TO PLAY
+        Keys: W, A, S, D, Q, E`
     ctx.clearRect(0, 0, canvas.width, canvas.height)
-    ctx.fillStyle = 'white'
-    ctx.fillText(text, canvas.width / 8, canvas.height * .4)
-    ctx.fillText(text2, canvas.width / 8, canvas.height * .6)
 }
 
 function tetris() {
