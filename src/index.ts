@@ -59,8 +59,34 @@ main: {
     //     ? 'block'
     //     : 'none'
     console.log('hello')
+    // if (isMobile)
     if (true)
     {
+        const leftBtn = document.getElementById('left-btn')!
+        const rightBtn = document.getElementById('right-btn')!
+        const upBtn = document.getElementById('up-btn')!
+        const downBtn = document.getElementById('down-btn')!
+        const rotateBtn = document.getElementById('rotate-btn')!
+        // const btns = [leftBtn,rightBtn,upBtn,downBtn,rotateBtn]
+        positionTheButtons: {
+            const W = window.innerWidth
+            const w3 = W/6
+            const base = w3 * .875
+            leftBtn.style.left = `${base | 0}px`
+            leftBtn.style.top  = `${base + w3| 0}px`
+
+            rightBtn.style.left = `${base + w3 * 2 | 0}px`
+            rightBtn.style.top  = `${base + w3 | 0}px`
+
+            upBtn.style.left = `${base + w3 | 0}px`
+            upBtn.style.top  = `${base | 0}px`
+            
+            downBtn.style.left = `${base + w3 | 0}px`
+            downBtn.style.top  = `${base + w3 * 2| 0}px`
+
+            rotateBtn.style.left = `${base + w3 * 3| 0}px`
+            rotateBtn.style.top  = `${base + w3 * 2| 0}px`
+        }
         const btnIdMap =
             { le: PRESSING.left
             , ri: PRESSING.right
