@@ -53,10 +53,9 @@ const game =
 updateDimensions()
 window.addEventListener('resize', updateDimensions)
 function updateDimensions() {
-    // const [scaleW, scaleH] = [0.6, 1]
-    canvas.width = window.innerWidth
-    canvas.height = window.innerHeight
-    game.pixelSize = Math.min(canvas.width / W, canvas.height / H)
+    game.pixelSize = Math.min(window.innerWidth / W, window.innerHeight / H)
+    canvas.style.width = `${canvas.width = game.pixelSize * W}px`
+    canvas.style.height = `${canvas.height = game.pixelSize * H}px`
     ctx.font = '15px Arial'
     render()
 }
