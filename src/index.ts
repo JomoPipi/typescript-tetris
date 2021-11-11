@@ -67,7 +67,7 @@ main: {
         const upBtn = document.getElementById('up-btn')!
         const downBtn = document.getElementById('down-btn')!
         const rotateBtn = document.getElementById('rotate-btn')!
-        // const btns = [leftBtn,rightBtn,upBtn,downBtn,rotateBtn]
+        const btnss = [leftBtn,rightBtn,upBtn,downBtn,rotateBtn]
         positionTheButtons: {
             const W = window.innerWidth
             const w3 = W/6
@@ -86,6 +86,8 @@ main: {
 
             rotateBtn.style.left = `${base + w3 * 3| 0}px`
             rotateBtn.style.top  = `${base + w3 * 2| 0}px`
+
+            btnss.forEach(b => b.style.fontSize = `${Math.max(16, base * 0.75 |0)}px`)
         }
         const btnIdMap =
             { le: PRESSING.left
