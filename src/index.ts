@@ -1,5 +1,5 @@
 
-const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+const isMobile = true // /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
 enum STATES { standby, game, gameOver }
 enum TetriminoTypes { I, J, L, O, S, T, Z }
@@ -18,7 +18,7 @@ const ctx = canvas.getContext('2d')!
 const W = 10
 const H = 20
 const BASE_TICK = 1000
-const PRESSING = { none: 0, left: 1, up: 2, right: 4, down: 8, 'rotate-left': 16, 'rotate-right': 32 } as const
+const PRESSING = { none: 0, left: 1, up: 2, right: 4, down: 8, 'rotate-left': 16, 'rotate-right': 32, swap: 64 } as const
 const KeyMap = { a: 'left', w: 'up', d: 'right', s: 'down', q: 'rotate-left', e: 'rotate-right' } as const
 const TetriminoShapes : Record<TetriminoTypes, Point[]> = 
     { [TetriminoTypes.I]: [[-1,0],[0,0],[1,0],[2,0]].map(([x,y]) => ({ x, y }))
@@ -66,7 +66,8 @@ main: {
         const upBtn = document.getElementById('up-btn')!
         const downBtn = document.getElementById('down-btn')!
         const rotateBtn = document.getElementById('rotate-btn')!
-        const btnss = [leftBtn,rightBtn,upBtn,downBtn,rotateBtn]
+        const swapBtn = document.getElementById('swap-btn')!
+        const btnss = [leftBtn,rightBtn,upBtn,downBtn,rotateBtn,swapBtn]
         positionTheButtons: {
             const W = window.innerWidth
             const w3 = W/6
@@ -86,6 +87,9 @@ main: {
             rotateBtn.style.left = `${base + w3 * 3| 0}px`
             rotateBtn.style.top  = `${base + w3 * 2| 0}px`
 
+            swapBtn.style.left = `${base + w3 * 3| 0}px`
+            swapBtn.style.top  = `${base | 0}px`
+
             btnss.forEach(b => b.style.fontSize = `${Math.max(16, base * 0.75 |0)}px`)
         }
         const btnIdMap =
@@ -94,6 +98,7 @@ main: {
             , up: PRESSING.up
             , do: PRESSING.down
             , ro: PRESSING["rotate-left"]
+            , sw: PRESSING.swap
             }
         
         btns.onmousedown = (e) => {
@@ -316,6 +321,19 @@ function controlCurrentBlock() {
     game.pressing & PRESSING.left && block.x--
     game.pressing & PRESSING.right && block.x++
     game.pressing & PRESSING.down && block.y++
+
+    if (game.pressing & PRESSING.swap)
+    {
+        const newPoints = game.upcomingBlock.points
+        const newType = game.upcomingBlock.type
+        const oldPoints = block.points
+        const oldType = block.type
+        block.points = newPoints
+        block.type = newType
+        game.upcomingBlock.type = oldType
+        game.upcomingBlock.points = oldPoints
+        return
+    }
 
     if (game.pressing & PRESSING.up)
     {
