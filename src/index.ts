@@ -57,7 +57,7 @@ function updateDimensions() {
     canvas.width = window.innerWidth
     canvas.height = window.innerHeight
     game.pixelSize = Math.min(canvas.width / W, canvas.height / H)
-    ctx.font = '30px Arial'
+    ctx.font = '15px Arial'
     render()
 }
 
@@ -67,11 +67,25 @@ function render() {
         , [STATES.game]:     tetris
         , [STATES.gameOver]: gameOver 
         }
+    msgPrompt.innerText = ''
     functions[game.state]()
 }
 
 
 
+
+document.onmousedown = () => {
+    if (game.state !== STATES.game)
+    {
+        const stateMap =
+            { [STATES.standby] : STATES.game
+            , [STATES.gameOver] : STATES.standby
+            }
+        game.state = stateMap[game.state]
+        requestAnimationFrame(render)
+        return
+    }
+}
 
 document.onkeydown = e => {
     if (game.state !== STATES.game)
@@ -98,7 +112,6 @@ document.onkeyup = e => {
 
 
 
-
 function standby() {
     console.log('isMobile =',isMobile)
     msgPrompt.innerText = isMobile
@@ -114,22 +127,13 @@ function tetris() {
 
     tickCurrentBlock(t)
     clearScreen()
-    drawScore()
     drawBlocks()
+    drawScore()
     requestAnimationFrame(render)
 }
 
 function gameOver() {
-    ctx.fillStyle = 'rgba(0,0,0,0.5)'
-    ctx.beginPath()
-    ctx.fillRect(0,0,canvas.width,canvas.height)
-    ctx.fill()
-    ctx.fillStyle = 'red'
-    ctx.fillText("GAME OVER", canvas.width / 8, canvas.height * .4);
-    ctx.fillStyle = 'white'
-    ctx.fillText("press any key to return", canvas.width / 8, canvas.height * .5);
-    ctx.fillText("to the main menu", canvas.width / 8, canvas.height * .6);
-
+    msgPrompt.innerText = 'GAME OVER'
     game.blockGrid = newBlockGrid()
     game.score = 0
 }
@@ -157,11 +161,6 @@ function clearScreen() {
     ctx.clearRect(0, 0, W * game.pixelSize, H * game.pixelSize)
 }
 
-function drawScore() {
-    ctx.fillStyle = 'white'
-    ctx.fillText(`Score: ${game.score}`, W * game.pixelSize + 10, 40)
-}
-
 function drawBlocks() {
     ctx.strokeStyle = 'white'
     drawBlock(game.currentBlock)
@@ -178,20 +177,27 @@ function drawBlocks() {
             }
         }
     }
+
+    function drawBlock(b : Tetrimino) {
+        ctx.fillStyle = TetriminoColors[b.type]
+        b.points.forEach(({ x, y }) => pixel(b.x + x, b.y + y))
+    }
+
+    function drawUpcomingBlock(b : Tetrimino) {
+        const dx = (W - 2) * game.pixelSize
+        const dy = game.pixelSize
+        ctx.translate(dx, dy)
+        ctx.scale(0.5, 0.5)
+        ctx.fillStyle = TetriminoColors[b.type]
+        b.points.forEach(({ x, y }) => pixel(x, y))
+        ctx.scale(2, 2)
+        ctx.translate(-dx, -dy)
+    }
 }
 
-function drawBlock(b : Tetrimino) {
-    ctx.fillStyle = TetriminoColors[b.type]
-    b.points.forEach(({ x, y }) => pixel(b.x + x, b.y + y))
-}
-
-function drawUpcomingBlock(b : Tetrimino) {
-    const dx = (2 + W) * game.pixelSize
-    const dy =  2 * game.pixelSize
-    ctx.translate(dx, dy)
-    ctx.fillStyle = TetriminoColors[b.type]
-    b.points.forEach(({ x, y }) => pixel(x, y))
-    ctx.translate(-dx, -dy)
+function drawScore() {
+    ctx.fillStyle = 'white'
+    ctx.fillText(`Score: ${game.score}`, 5, 20)
 }
 
 function collisionExists() {
