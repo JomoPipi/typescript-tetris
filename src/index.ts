@@ -60,7 +60,6 @@ main: {
         : 'none'
         
     if (isMobile)
-    // if (true)
     {
         const leftBtn = document.getElementById('left-btn')!
         const rightBtn = document.getElementById('right-btn')!
@@ -199,7 +198,7 @@ function tetris() {
 function gameOver() {
     msgPrompt.innerText = 'GAME OVER'
     game.blockGrid = newBlockGrid()
-    game.score = 0
+    game.score = game.totalClearedLines = 0
 }
 
 function tickCurrentBlock(t : number) {
