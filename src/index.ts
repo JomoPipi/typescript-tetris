@@ -48,10 +48,47 @@ const game =
     , pixelSize: 0
     , blockGrid: newBlockGrid()
     , score: 0
+    , totalClearedLines: 0
     }
 
-updateDimensions()
-window.addEventListener('resize', updateDimensions)
+main: {
+    updateDimensions()
+    window.addEventListener('resize', updateDimensions)
+    const btns = document.getElementById('mobile-btns')!
+    // btns.style.display = isMobile
+    //     ? 'block'
+    //     : 'none'
+    console.log('hello')
+    if (true)
+    {
+        const btnIdMap =
+            { le: PRESSING.left
+            , ri: PRESSING.right
+            , up: PRESSING.up
+            , do: PRESSING.down
+            , ro: PRESSING["rotate-left"]
+            }
+        
+        btns.onmousedown = (e) => {
+            console.log('yo')
+            const btn = e.target as HTMLElement
+            const btnId = btn.id.slice(0,2) as 'le'
+            if (!btnIdMap[btnId]) return
+            game.pressing |= btnIdMap[btnId]
+            controlCurrentBlock()
+        } 
+
+        btns.onmouseup = (e) => {
+            // console.log('up') 
+            // return;
+            const btn = e.target as HTMLElement
+            const btnId = btn.id.slice(0,2) as 'le'
+            console.log('btnid =',btnId)
+            if (!btnIdMap[btnId]) return console.log('im here')
+            game.pressing &= ~btnIdMap[btnId]
+        }
+    }
+}
 function updateDimensions() {
     game.pixelSize = Math.min(window.innerWidth / W, window.innerHeight / H)
     canvas.style.width = `${canvas.width = game.pixelSize * W}px`
@@ -195,8 +232,12 @@ function drawBlocks() {
 }
 
 function drawScore() {
+    const level = game.totalClearedLines / 10 | 0
+    const L = Math.max(0, 255 - level * 10)
     ctx.fillStyle = 'white'
     ctx.fillText(`Score: ${game.score}`, 5, 20)
+    ctx.fillStyle = `rgb(255,${L},${L})`
+    ctx.fillText(`Level ${level}`, 5, 40)
 }
 
 function collisionExists() {
@@ -298,7 +339,10 @@ function clearCompletedLines() {
     game.blockGrid = [...Array(lines.size)].map(_ => [...Array(W)])
         .concat(game.blockGrid.filter((_,r) => !lines.has(r)))
 
-    game.score += lines.size * W * 2 // Each tile is worth two points
+    const scores = [0, 100, 200, 400, 1000]
+    const getScore = (n : number) => [40 * (n + 1), 100 * (n + 1), 300 * (n + 1), 1200 * (n + 1)]
+    const level = game.totalClearedLines / 10 | 0
+    game.score += getScore(level)[lines.size] // lines.size * W * 2 // Each tile is worth two points
 }
 
 function pixel(x : number, y : number) {
